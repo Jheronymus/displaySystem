@@ -63,6 +63,9 @@ displaySystem.config({
             timer: 5000,
             lines: 8
         },
+        'vpaint': {
+            visible: true,
+        },
         'css': {
             href: 'themes/rednblue.css',
             // href: 'themes/default.css',
