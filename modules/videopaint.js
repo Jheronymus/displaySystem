@@ -20,12 +20,16 @@ displaySystem.registerModule({
     factory: function(config, onMessage, sendMessage) {
         var el;
         var visible = false;
+        var local = false;
         var ctx;
         var system = displaySystem;
 
 
         function getElement() {
             return document.getElementById('videopaint');
+        }
+        function setLocal() {
+            local = true;
         }
         function show() {
             visible = true;
@@ -66,13 +70,17 @@ displaySystem.registerModule({
                 x = e.pageX - offset.left;
                 y = e.pageY - offset.top;
 
-                draw(x, y, type);
-                data = {
-                    'x': x,
-                    'y': y,
-                    'type': type
-                };
-                system.ws.sendMessage({name:'videopaint'}, 'draw', data)
+                if (local){
+                    draw(x, y, type);
+                } else {
+                    data = {
+                        'x': x,
+                        'y': y,
+                        'type': type
+                    };
+                    system.ws.sendMessage({name:'videopaint'}, 'draw', data)
+                }
+
             });
         }
 
@@ -87,6 +95,10 @@ displaySystem.registerModule({
         if (config.visible) {
             show();
             console.log("show thing");
+        }
+
+        if (config.local) {
+            setLocal();
         }
 
         init();

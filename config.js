@@ -65,6 +65,7 @@ displaySystem.config({
         },
         'videopaint': {
             visible: true,
+            local: false,
         },
         'css': {
             href: 'themes/rednblue.css',
