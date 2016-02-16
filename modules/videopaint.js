@@ -34,10 +34,18 @@ displaySystem.registerModule({
         function show() {
             visible = true;
             getElement().classList.remove('hidden');
+            addEvents();
         }
         function hide() {
             visible = false;
             getElement().classList.add('hidden');
+            removeEvents();
+        }
+        function addEvents(){
+            $(getElement()).on('drag dragstart dragend', dragEvent);
+        }
+        function removeEvents(){
+            $(getElement()).off('drag dragstart dragend', dragEvent);
         }
         function draw(x, y, type) {
             console.log('draw');
@@ -51,6 +59,26 @@ displaySystem.registerModule({
                 return ctx.closePath();
             }
         }
+        function dragEvent(e){
+            var offset, type, x, y;
+            type = e.handleObj.type;
+            //console.log(e);
+            offset = $('#videopaint').offset();
+            
+            x = e.pageX - offset.left;
+            y = e.pageY - offset.top;
+
+            if (local){
+                draw(x, y, type);
+            } else {
+                data = {
+                    'x': x,
+                    'y': y,
+                    'type': type
+                };
+                system.ws.sendMessage({name:'videopaint'}, 'draw', data)
+            }
+        }
         function init(){
             console.log("init");
             ctx = getElement().getContext("2d");
@@ -59,34 +87,10 @@ displaySystem.registerModule({
             ctx.strokeStyle = "#ECD018";
             ctx.lineWidth = 5;
             ctx.lineCap = "round";
-
-            $(getElement()).on('drag dragstart dragend', function(e){
-
-                var offset, type, x, y;
-                type = e.handleObj.type;
-                //console.log(e);
-                offset = $('#videopaint').offset();
-                
-                x = e.pageX - offset.left;
-                y = e.pageY - offset.top;
-
-                if (local){
-                    draw(x, y, type);
-                } else {
-                    data = {
-                        'x': x,
-                        'y': y,
-                        'type': type
-                    };
-                    system.ws.sendMessage({name:'videopaint'}, 'draw', data)
-                }
-
-            });
         }
 
         onMessage('draw', function(msg) {
-            // need check on socket to prevent double draw
-            console.log('external draw');
+            //console.log('external draw');
             if (msg && msg.data) {
                 draw(msg.data.x, msg.data.y, msg.data.type);
             }
@@ -94,7 +98,7 @@ displaySystem.registerModule({
 
         if (config.visible) {
             show();
-            console.log("show thing");
+            //console.log("show thing");
         }
 
         if (config.local) {
