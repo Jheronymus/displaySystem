@@ -63,7 +63,7 @@ displaySystem.config({
             timer: 5000,
             lines: 8
         },
-        'vpaint': {
+        'videopaint': {
             visible: true,
         },
         'css': {

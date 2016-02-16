@@ -1,11 +1,11 @@
 displaySystem.registerModule({
-    name: 'vpaint',
+    name: 'videopaint',
     template: multiline(function() {/*
-        <canvas id="vpaint" width="1500" height="800"></canvas>
+        <canvas id="videopaint" width="1500" height="800"></canvas>
     */}),
     style: multiline(function() {/*
 
-        #vpaint {
+        #videopaint {
             margin: 20px auto;
             display: block;
             border: 5px solid #E8E8E8;
@@ -13,7 +13,7 @@ displaySystem.registerModule({
             opacity: 1;
             transition: opacity 0.3s;
         }
-        #vpaint.hidden {
+        #videopaint.hidden {
             opacity: 0;
         }
     */}),
@@ -25,7 +25,7 @@ displaySystem.registerModule({
 
 
         function getElement() {
-            return document.getElementById('vpaint');
+            return document.getElementById('videopaint');
         }
         function show() {
             visible = true;
@@ -61,7 +61,7 @@ displaySystem.registerModule({
                 var offset, type, x, y;
                 type = e.handleObj.type;
                 //console.log(e);
-                offset = $('#vpaint').offset();
+                offset = $('#videopaint').offset();
                 
                 x = e.pageX - offset.left;
                 y = e.pageY - offset.top;
@@ -72,7 +72,7 @@ displaySystem.registerModule({
                     'y': y,
                     'type': type
                 };
-                system.ws.sendMessage({name:'vpaint'}, 'draw', data)
+                system.ws.sendMessage({name:'videopaint'}, 'draw', data)
             });
         }
 
