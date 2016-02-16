@@ -252,3 +252,59 @@ body {
 
 #twitter .message {
 }
+
+/* videopaint */
+#videopainttools {
+    right: 0;
+    background-color: darkblue;
+    color: white;
+    transition: transform 0.3s;
+    height: 5vh;
+    line-height: 5vh;
+    padding-right: 3vh;
+    text-align: right;
+}
+
+#videopainttools::before {
+    content: '';
+    width: 2.5vh;
+    display: block;
+    height: 5vh;
+    position: absolute;
+    left: -2.5vh;
+    top: 0;
+    border: 2px solid black;
+    box-sizing: border-box;
+    border-width: 0 0 5vh 1.25vh;
+    border-color: darkblue transparent;
+}
+
+#videopainttools.hidden {
+    transform: translate(120%);
+}
+
+ul#videopainttools                         {  list-style: none;}
+ul#videopainttools li                      { float: left; background: darkblue; padding-right: 3vh;}
+ul#videopainttools a:hover                 { color: #fff; }
+ul#videopainttools a:active                { color: #fff; }
+ul#videopainttools li a                    { display: block; color: #fff; text-decoration: none !important;}
+ul#videopainttools li:last-child a         { border-right: none; } /* Doesn't work in IE */
+ul#videopainttools li.hover,
+ul#videopainttools li:hover                { background: crimson; color: #fff; position: relative; }
+ul#videopainttools li.hover a              { color: black; }
+
+
+/* 
+    LEVEL TWO
+*/
+ul#videopainttools ul                      { visibility: hidden; position: absolute; bottom: 100%; right: 0; list-style: none;}
+ul#videopainttools ul li                   { background: darkblue; color: #fff; float: none; }
+                                      
+                                    /* IE 6 & 7 Needs Inline Block */
+ul#videopainttools ul li a                 { width: 100%; display: inline-block; text-decoration: none !important;} 
+
+/* 
+    LEVEL THREE
+*/
+ul#videopainttools ul ul                   { left: 100%; top: 0; list-style: none;}
+ul#videopainttools li:hover > ul           { visibility: visible; }
