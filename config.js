@@ -1,8 +1,10 @@
 displaySystem.config({
     //websocket host to listen to
-    wsHost: "ws://localhost:13900/",
+    wsHost: "localhost:13900/",
+    //host to listen to in case of a secure connection
+    wssHost: "localhost.daplie.com:13900/",
     //specify the node that is being subscribed to when using mserver
-    mserverNode: "overlay",
+    mserverNode: "default",
     //modules, order determines z stacking
     modules: {
         'background': {

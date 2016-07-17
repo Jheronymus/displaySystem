@@ -15,6 +15,7 @@ Contents
 *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
 - [Get it running](#get-it-running)
+    - [Test online](#test-online)
     - [Get it locally](#get-it-locally)
     - [As a simple display in the browser](#as-a-simple-display-in-the-browser)
     - [Using key bindings](#using-key-bindings)
@@ -44,13 +45,18 @@ Contents
 Get it running
 -------
 
+### Test online
+
+You can check out display system [online](https://firstlegoleague.github.io/displaySystem/), however, you can't really customize anything. It is a nice way to check it out though.
+
+Everything is served over https, which allows the webcam to work. If you want to [control the system via websockets](#controlling-the-modules-via-websockets), you can easily set up your own [mhub](https://github.com/poelstra/mhub). See [Controlling the modules via websockets](#controlling-the-modules-via-websockets) for a description to get that running.
+
 ### Get it locally
 
 Either:
 
 - If you know what `git` is: clone the repository: `git clone https://github.com/FirstLegoLeague/displaySystem.git` and check out the branch `gh-pages`.
 - Otherwise, just download the zip from: <https://github.com/FirstLegoLeague/displaySystem/archive/gh-pages.zip> and unpack.
-- Also, you can just use it [online](http://firstlegoleague.github.io/displaySystem/), however, you can't really customize anything. It is a nice way to check it out though.
 
 There are a few ways to use this package
 
@@ -104,26 +110,26 @@ Since the display can be controlled by javascript, you could create a control wi
 
 Luckily, we have already done this for you, but there is a catch. The control window does not work when you are using the display system directly from the file system (if this is the case, the address bar starts with `file:///`). There are a few ways to solve this:
 
-- Use the [online version](http://firstlegoleague.github.io/displaySystem/), but as said, there is not much to customize here.
+- Use the [online version](https://firstlegoleague.github.io/displaySystem/), but as said, there is not much to customize here.
 - Host it somewhere online (most hosting providers allow you to FTP the files).
 - Host it locally, for this you need to install a web server. The easiest one I can think of is installed like this:
     - install nodejs from <https://nodejs.org/>
     - open a command window (from the start menu, type `cmd` and press enter)
-    - install a static file server by typing `npm install -g node-static`. This will install a simple web server.
     - open the folder where you downloaded this display system (in the command window)
-    - type `static`
-    - you can now open the application by navigating to <http://localhost:8080>
+    - type `npm install`
+    - type `npm start`
+    - you can now open the application by navigating to <http://localhost:1391>
 - Lastly, you can also control the display system by other means, but this gets more complicated. More on that below.
 
 So, the control window. To open it, press `c`
 
-The control window shows buttons for all commands that the modules have. There are also input fields if the commands can take arguments. Try and use this to display the time or the clock (for instance in the [online version](http://firstlegoleague.github.io/displaySystem/)).
+The control window shows buttons for all commands that the modules have. There are also input fields if the commands can take arguments. Try and use this to display the time or the clock (for instance in the [online version](https://firstlegoleague.github.io/displaySystem/)).
 
 ### Using as a video overlay system
 
 If you want to use the display system as an overlay to a video feed (which is the original purpose), you need to get rid of the white background and replace it with live video. There are several ways to do this
 
-- Use the browser as your video mixer. To do this, use the `camera` module. By feeding in a video signal (for instance using a usb camera), you can create a composite output. You may want to set the [background module](#background) to black if the screen size does not match the video size. If you have a webcam, you may already have discovered this in the [online version](http://firstlegoleague.github.io/displaySystem/).
+- Use the browser as your video mixer. To do this, use the `camera` module. By feeding in a video signal (for instance using a usb camera), you can create a composite output. You may want to set the [background module](#background) to black if the screen size does not match the video size. If you have a webcam, you may already have discovered this in the [online version](https://firstlegoleague.github.io/displaySystem/).
 - Give the background a special color, and use a separate video mixer with [chroma key](http://en.wikipedia.org/wiki/Chroma_key) capabilities to mix the overlay over a video feed. Use the [background module](#background) to do this.
 - Use more advanced software video mixing software, like [caspar CG](http://www.casparcg.com/). In the newest versions, you can use a `HTML producer` to overlay a webpage (like this display system) over a video. Make sure, you disable the background module to have a transparent background. Also, from within Caspar, you can create JavaScript functions to control the modules, much like we have done manually from the console.
 
@@ -164,37 +170,75 @@ For example:
         }
     }
 
-Since websockets only support text transfer, the above object should be serialized to JSON. It is automatically deserialized and passed to the apropriate module. To get mserver running, just read [the instructions](https://github.com/poelstra/mhub). In short:
+Since websockets only support text transfer, the above object should be serialized to JSON. It is automatically deserialized and passed to the apropriate module. To get mhub-server running, just read [the instructions](https://github.com/poelstra/mhub). In short:
 
 Install:
 
     npm install -g mhub
 
+Configure `sever.conf.json`:
+
+    {
+        "listen": {
+            "port": 13900
+        },
+        "verbose": true,
+        "nodes": ["default", "test", "overlay", "twitter"],
+        "bindings": [
+            { "from": "twitter", "to": "overlay", "pattern": "*" }
+        ]
+    }
+
 Start:
 
-    mserver
+    mhub-server
 
 Send a message:
 
     //*nix
-    mclient -n twitter -t twitter:addMessage -d '{"id":123,"user":{"screen_name":"FLL"},"text":"FLL is great"}'
+    mhub-client -n twitter -t twitter:addMessage -d '{"id":123,"user":{"screen_name":"FLL"},"text":"FLL is great"}'
     //windows
-    mclient -n twitter -t twitter:addMessage -d "{""id"":123,""user"":{""screen_name"":""FLL""},""text"":""FLL is great""}"
+    mhub-client -n twitter -t twitter:addMessage -d "{""id"":123,""user"":{""screen_name"":""FLL""},""text"":""FLL is great""}"
 
-In your config.js, make sure you have the following options:
+In your `config.js`, make sure you have the following options:
 
-    wsHost: "ws://localhost:13900",
+    wsHost: "localhost:13900",
     mserverNode: "overlay"
 
-Note that in the mserver config (`server.conf.json`), the `twitter` node is forwarded to the `overlay` node. That makes this setup work.
+Note that in the mhub-server config (`server.conf.json`), the `twitter` node is forwarded to the `overlay` node. That makes this setup work.
+
+For the online version, mhub-server needs to run with tls enabled. To do this, add certificate files to `server.conf.json`:
+
+    {
+        "listen": {
+            "port": 13900,
+            "key": "../certs/privkey.pem",
+            "cert": "../certs/fullchain.pem"
+        },
+        "verbose": true,
+        "nodes": ["default", "test", "overlay", "twitter"],
+        "bindings": [
+            { "from": "twitter", "to": "overlay", "pattern": "*" }
+        ]
+    }
+
+These files are created by the great folks at [daplie](https://github.com/Daplie/localhost.daplie.com-certificates), who provide certificates for the `localhost.daplie.com` domain, which just points to localhost (127.0.0.1). The files you need are these:
+
+- [privkey.pem](https://raw.githubusercontent.com/Daplie/localhost.daplie.com-certificates/master/privkey.pem)
+- [fullchain.pem](https://raw.githubusercontent.com/Daplie/localhost.daplie.com-certificates/master/fullchain.pem)
+
+Note that in the default (online) `config.js`, we have:
+
+    wsHost: "wss://localhost.daplie.com:13900",
+    mserverNode: "default"
 
 All api functions are automatically exposed as mhub topics. For example, where we used `displaySystem.modules.clock.show()` via the command line before, we can now do the same via websockets:
 
-    mclient -n overlay -t clock:show
+    mhub-client -n default -t clock:show
 
-When data needs to be added, for example when arming the clock via `displaySystem.modules.clock.arm(30)`, we need to add a data segment to the `mclient` message:
+When data needs to be added, for example when arming the clock via `displaySystem.modules.clock.arm(30)`, we need to add a data segment to the `mhub-client` message:
 
-    mclient -n overlay -t clock:arm -d '{"countdown":30}'
+    mhub-client -n default -t clock:arm -d '{"countdown":30}'
 
 ### Adding a twitter feed to your display
 
@@ -214,11 +258,11 @@ Now test your twitter stream in the console:
 
 This would start streaming live twitter messages in your console. You are now one step away from connecting everything:
 
-    tweet stream lego --json | mclient -n twitter -t twitter:addMessage -i json
+    tweet stream lego --json | mhub-client -n twitter -t twitter:addMessage -i json
 
-This command uses [pipes](http://en.wikipedia.org/wiki/Pipeline_(Unix)) to take the output of the `tweet` utility and *pipe* it into `mclient`.
+This command uses [pipes](http://en.wikipedia.org/wiki/Pipeline_(Unix)) to take the output of the `tweet` utility and *pipe* it into `mhub-client`.
 
-**By the way...** the hosted version listens to `ws://localhost:13900/` on the `overlay` node. So you can set up `node-tweet-cli` and `mserver` locally and still use the hosted version of the display system. Isn't that sweet?
+**By the way...** the hosted version listens to `localhost:13900/` on the `default` node. So you can set up `node-tweet-cli` and `mhub-server` locally and still use the hosted version of the display system. Isn't that sweet?
 
 ### Controlling time
 
@@ -228,24 +272,24 @@ Also, you may want to set another time altogether, for example number of minutes
 
 To set the time, you could just use the control window, but you can also use the websockets interface.
 
-A nice way to ensure a consistent time is to just *pipe* a timestamp into `mclient`.
+A nice way to ensure a consistent time is to just *pipe* a timestamp into `mhub-client`.
 
 First install the [cli-time utility](https://github.com/FirstLegoLeague/cli-time):
 
     npm install -g cli-time
 
-Then make sure that in the mserver config (`server.conf.json`), the `time` node is forwarded to the `overlay` node.
+Then make sure that in the mhub-server config (`server.conf.json`), the `time` node is forwarded to the `overlay` node.
 
-Then pipe it through to an mclient instance:
+Then pipe it through to an mhub-client instance:
 
-    cli-time -m json -i | mclient -n time -t time:set -i json
+    cli-time -m json -i | mhub-client -n time -t time:set -i json
 
 To set the time to 0 and start counting:
 
     //*nix
-    mclient -n time -t time:set -d '{"timestamp":"0"}'
+    mhub-client -n time -t time:set -d '{"timestamp":"0"}'
     //windows
-    mclient -n time -t time:set -d "{""timestamp"":""0""}"
+    mhub-client -n time -t time:set -d "{""timestamp"":""0""}"
 
 Note that the `"0"` is quoted and it actually means setting the time to Jan 1 2000 at 00:00 in your local timezone.
 
@@ -475,7 +519,7 @@ mhub topics:
 
 ### css
 
-To include custom styling, create a custom stylesheet to override a default style. Use this for instance to customize fonts, text sizes, colors or background images. You can host it somewhere yourself or serve it up with `static`, as described above.
+To include custom styling, create a custom stylesheet to override a default style. Use this for instance to customize fonts, text sizes, colors or background images. You can host it somewhere yourself or serve it up with `npm start`, as described above.
 
 Configuration options:
 
