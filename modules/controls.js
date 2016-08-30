@@ -73,7 +73,7 @@ displaySystem.registerModule({
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
-                <link rel="stylesheet" href="css/style.css">
+                <link rel="stylesheet" href="css/control.css">
                 <title>Overlay controls</title>
             </head>
             <body class="controls">
@@ -86,9 +86,9 @@ displaySystem.registerModule({
 
         function open() {
             if (config.url) {
-                var win = window.open(config.url,'fllDisplayControlWindow','resize=yes,width=800,height=350');
+                var win = window.open(config.url,'fllDisplayControlWindow','resize=yes');
             } else {
-                var win = window.open('','fllDisplayControlWindow','resize=yes,width=800,height=350');
+                var win = window.open('','fllDisplayControlWindow','resize=yes');
                 win.document.write(html);
                 init(win.document);
             }

@@ -16,38 +16,3 @@ html, body {
     right: 0;
     bottom: 0;
 }
-
-/* control window */
-@media screen {
-    body.controls {
-        font-family: verdana, helvetica, sans-serif;
-        font-size: 12px;
-        padding: 12px;
-    }
-    body.controls .instructions {
-        text-align: right;
-    }
-    body.controls label {
-        display: inline-block;
-        min-width: 75px;
-    }
-    body.controls span {
-        display: inline-block;
-        white-space: nowrap;
-    }
-    body.controls input,
-    body.controls textarea {
-        width: 75px;
-        border: 1px solid silver;
-        border-right: none;
-        padding: 2px;
-        overflow: hidden;
-        vertical-align: bottom;
-        font-size: 13px;
-        height: 15px;
-        resize: none;
-    }
-    body.controls button {
-        margin-right: 4px;
-    }
-}
