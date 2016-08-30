@@ -9,7 +9,7 @@ displaySystem.registerModule({
                 <li><a href="#" id="videotools_red">red</a></li>
             </ul></li>
         </ul>
-        <canvas id="videopaint" width="1500" height="800"></canvas>
+        <canvas id="videopaint"></canvas>
     */}),
     style: multiline(function() {/*
 
@@ -47,7 +47,12 @@ displaySystem.registerModule({
             return document.getElementById('videopainttools');
         }
         function setLocal() {
-            local = true;
+            if (system.ws){
+                local = true;
+                console.log("There is a network, so non local operation")
+            } else {
+                local = false;
+            }
         }
         function show() {
             visible = true;
@@ -78,7 +83,7 @@ displaySystem.registerModule({
             } else if (type === "dragend"){
                 return ctx.closePath();
             } else if (type === "clearcanvas"){
-                ctx.clearRect(0,0, 1500, 800); // todo canvas size issues
+                ctx.clearRect(0,0, getElement().width, getElement().height); // todo canvas size issues
             } else if (type === "setbrushyellow") {
                 ctx.fillStyle = "solid";
                 ctx.strokeStyle = "#ECD018";
@@ -153,9 +158,14 @@ displaySystem.registerModule({
             } 
         }
         function init(){
-            console.log("init");
-            ctx = getElement().getContext("2d");
-            console.log(ctx);
+            console.log("init videopaint");
+            setLocal();
+            var c = getElement();
+            c.width = window.innerWidth * 0.9;
+            c.height = window.innerHeight * 0.75;
+
+            ctx = c.getContext("2d");
+
             draw(0,0, "setbrushyellow");
 
             $('#videotools_clear').click(clearCanvas);
@@ -173,11 +183,6 @@ displaySystem.registerModule({
 
         if (config.visible) {
             show();
-            //console.log("show thing");
-        }
-
-        if (config.local) {
-            setLocal();
         }
 
         init();
