@@ -69,9 +69,8 @@ displaySystem.registerModule({
                     audio: useAudio,
                     video: true
                 }, function(stream) {
-                    video.src = window.URL.createObjectURL(stream);
+                    video.srcObject = stream;
                 }, function(error) {
-                    console.log(error);
                     switch(error.name) {
                         case "PermissionDeniedError":
                             // The user or browser denied permission to the camera
@@ -93,6 +92,7 @@ displaySystem.registerModule({
                             showError("The operation was aborted");
                             break;
                         default:
+                            console.log(error);
                             showError(error.name + ", message: " + (error.message||'no message'));
                     }
                 });
