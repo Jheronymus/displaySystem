@@ -21,12 +21,12 @@ displaySystem.config({
             visible: true,
             transition: 'fade',
             size: 'cover',
-            timeout: 4,
+            timeout: 8,
             images: [
-                'http://lorempixel.com/640/480/people/1',
-                'http://lorempixel.com/640/480/people/2',
-                'http://lorempixel.com/640/480/people/3',
-                'http://lorempixel.com/640/480/people/4'
+                'http://picsum.photos/id/43/1920/1080',
+                'http://picsum.photos/id/65/1920/1080',
+                'http://picsum.photos/id/179/1920/1080',
+                'http://picsum.photos/id/223/1920/1080'
             ],
             pages: [
                 // 'http://www.fll-tools.com/'
@@ -123,7 +123,7 @@ displaySystem.config({
                 right: '-1em',
                 padding: '0.2em 1em 0.2em 0em',
                 class: 'spriteimage primary exitright',
-                html: '<img class="medium" src="/themes/rednblue-plus/img/FIRSTLego_iconHorz_RGB.png"></img>'
+                html: '<img class="medium" src="themes/rednblue-plus/img/FIRSTLego_iconHorz_RGB.png"></img>'
             },{
                 width: '18em',
                 top: '68vh',
