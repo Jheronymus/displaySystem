@@ -100,6 +100,10 @@ displaySystem.registerModule({
             });
         }
 
+        function setSpeed(_speed) {
+            speed = 1 * _speed;
+        }
+
         var t = +(new Date());
         function tick() {
             var now = +(new Date());
@@ -216,7 +220,8 @@ displaySystem.registerModule({
             show: show,
             hide: hide,
             add: addStr,
-            remove: remStr
+            remove: remStr,
+            speed: setSpeed
         };
     }
 });
