@@ -43,7 +43,7 @@ displaySystem.registerModule({
                         args.forEach(function(arg,i) {
                             data[arg] = values[i];
                         });
-                        system.invoke({name:name}, fn, data);
+                        system.invoke(name, fn, data);
                     });
                     inps.forEach(appendTo(s));
                     s.appendChild(btn);

@@ -71,7 +71,6 @@ var displaySystem = (function() {
             ws.onclose = function() {
                 console.log("close Websocket. Reconnecting in",backoff,'ms');
                 connected = false;
-                delete system.ws;
                 pendingConnection = setTimeout(function() {
                     connect();
                 },backoff);
@@ -123,13 +122,13 @@ var displaySystem = (function() {
         }
     }
 
-    function sendMessage(def,action,data) {
+    function sendMessage(name,action,data) {
         if (config.wsHost || config.wssHost) {
 
             ws.send(JSON.stringify({
                 type: "publish",
                 node: config.mserverNode,
-                topic: def.name+':'+action,
+                topic: name+':'+action,
                 data: data
             }));
         }
@@ -212,12 +211,12 @@ var displaySystem = (function() {
         }
     }
 
-    function invoke(def, action, data) {
-        if (system.isConnected()) {
-            sendMessage(def, action, data);
+    function invoke(name, action, data) {
+        if (isConnected()) {
+            sendMessage(name, action, data);
         } else {
             handleMessage({
-                topic: def.name + ':' + action,
+                topic: name + ':' + action,
                 data: data
             });
         }
