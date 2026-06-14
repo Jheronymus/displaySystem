@@ -1,8 +1,7 @@
 // display system main
 var displaySystem = (function() {
-    var system = {
-        connected: false
-    };
+    var system = {};
+    var connected = false;
     var config;
     var modules = {};
     var moduleDefs = {};
@@ -39,7 +38,7 @@ var displaySystem = (function() {
     }
 
     var backoff = 100;
-    var maxBackoff = 5000;
+    var maxBackoff = 50000;
     var pendingConnection;
 
     function initWebsocket(config) {
@@ -61,17 +60,17 @@ var displaySystem = (function() {
                         type: "subscribe",
                         node: config.mserverNode
                     }));
-                    system.connected = true;
+                    connected = true;
                     backoff = 100;
                 }
             };
             ws.onerror = function(e){
-                console.log("error");
+                console.log("Websocket error");
                 ws.close();
             };
             ws.onclose = function() {
-                console.log("close reconnecting in",backoff,'ms');
-                system.connected = false;
+                console.log("close Websocket. Reconnecting in",backoff,'ms');
+                connected = false;
                 delete system.ws;
                 pendingConnection = setTimeout(function() {
                     connect();
@@ -91,11 +90,6 @@ var displaySystem = (function() {
 
     function connect() {
         ws = initWebsocket(config);
-        if (ws) {
-            system.ws = {
-                sendMessage: sendMessage
-            };
-        }
     }
 
     function getArguments(f) {
@@ -131,6 +125,7 @@ var displaySystem = (function() {
 
     function sendMessage(def,action,data) {
         if (config.wsHost || config.wssHost) {
+
             ws.send(JSON.stringify({
                 type: "publish",
                 node: config.mserverNode,
@@ -217,11 +212,28 @@ var displaySystem = (function() {
         }
     }
 
+    function invoke(def, action, data) {
+        if (system.isConnected()) {
+            sendMessage(def, action, data);
+        } else {
+            handleMessage({
+                topic: def.name + ':' + action,
+                data: data
+            });
+        }
+    }
+
+    function isConnected() {
+        return connected;
+    }
+
     system = Object.assign(system, {
         config: setConfig,
         registerModule,
         modules,
         definitions: moduleDefs,
+        invoke: invoke,
+        isConnected: isConnected,
         loadScript,
         loadCss
     });

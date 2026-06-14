@@ -28,14 +28,6 @@ displaySystem.registerModule({
             return inp;
         }
 
-        function sendMessage(name,action,args,values) {
-            var data = {};
-            args.forEach(function(arg,i) {
-                data[arg] = values[i];
-            });
-            system.ws.sendMessage({name:name},action,data);
-        }
-
         function renderModule(module, name, container) {
             return function(fn) {
                 var f = module[fn];
@@ -46,14 +38,12 @@ displaySystem.registerModule({
                     var btn = document.createElement('button');
                     btn.innerHTML = fn;
                     btn.addEventListener('click',function() {
-                        var data = inps.map(getValue);
-                        if (system.ws) {
-                            //handle via websocket
-                            sendMessage(name,fn,args,data);
-                        } else {
-                            //handle directly
-                            f.apply(module,data);
-                        }
+                        var values = inps.map(getValue);
+                        var data = {};
+                        args.forEach(function(arg,i) {
+                            data[arg] = values[i];
+                        });
+                        system.invoke({name:name}, fn, data);
                     });
                     inps.forEach(appendTo(s));
                     s.appendChild(btn);
